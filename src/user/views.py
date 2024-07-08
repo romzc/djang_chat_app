@@ -3,6 +3,7 @@ from rest_framework import permissions, viewsets
 from django.contrib.auth.models import User, Group
 from .models import Profile
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from .api.serializers import (
    UserSerializer, 
    GroupSerializer, 
@@ -12,6 +13,8 @@ from .api.serializers import (
 
 
 class UserObtainTokenPairView(TokenObtainPairView):
+   """
+   """
    serializer_class = UserTokenObtainPairSerializer
 
    def get_serializer_context(self):
@@ -27,7 +30,9 @@ class UserViewSet(viewsets.ModelViewSet):
    """
    queryset =  User.objects.all().order_by('-date_joined')
    serializer_class = UserSerializer
+   authentication_classes = [JWTAuthentication]
    permission_classes = [permissions.IsAuthenticated]
+
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -36,6 +41,7 @@ class GroupViewSet(viewsets.ModelViewSet):
    """
    queryset = Group.objects.all().order_by('name')
    serializer_class = GroupSerializer
+   authentication_classes = [JWTAuthentication]
    permission_classes = [permissions.IsAuthenticated]
 
 
@@ -45,4 +51,5 @@ class ProfileViewSet(viewsets.ModelViewSet):
    """
    queryset = Profile.objects.all().order_by('-last_seen')
    serializer_class = ProfileSerializer
+   authentication_classes = [JWTAuthentication]
    permission_classes = [permissions.IsAuthenticated]

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from ..models import ChatGroup, Message, Contact
 from user.api.serializers import UserSerializer
+from django.contrib.auth.models import User
 
 class MessageSerializer(serializers.ModelSerializer):
 
@@ -10,6 +11,7 @@ class MessageSerializer(serializers.ModelSerializer):
    class Meta:
       model = Message
       fields = ['sender', 'receiver', 'timestamp', 'content']
+
 
 class ChatGroupSerializer(serializers.ModelSerializer):
    class Meta:
