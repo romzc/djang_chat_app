@@ -81,6 +81,9 @@ class UserSerializer(serializers.ModelSerializer):
          return None
       except Profile.DoesNotExist:
          return None
+
+   def create(self, validated_data):
+      return super().create(validated_data)
   
 
 class GroupSerializer(serializers.HyperlinkedModelSerializer):

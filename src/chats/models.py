@@ -12,6 +12,8 @@ class Contact(models.Model):
    class Meta:
       unique_together = ('user', 'contact')
 
+   def __str__(self) -> str:
+      return f"{str(self.user)} - {str(self.contact)}"
 
 class Message(models.Model):
    sender = models.ForeignKey(User, related_name='sent_messages', on_delete=models.CASCADE)
