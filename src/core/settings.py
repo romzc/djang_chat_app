@@ -33,14 +33,18 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # 3th apps
     "rest_framework",
     "rest_framework_simplejwt",
+    "channels",
+    "djangochannelsrestframework",
     # Apps
     "user",
     "chats"
@@ -94,7 +98,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "core.wsgi.application"
-
+ASGI_APPLICATION = "core.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -124,6 +128,12 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+CHANNEL_LAYERS = {
+   "default": {
+      "BACKEND": "channels.layers.InMemoryChannelLayer"
+   }
+}
 
 
 # Internationalization
