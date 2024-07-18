@@ -4,6 +4,8 @@ from django.contrib.auth.models import AnonymousUser, User
 from channels.middleware import BaseMiddleware
 from channels.db import database_sync_to_async
 from urllib.parse import parse_qs
+from channels.auth import AuthMiddlewareStack
+
 
 @database_sync_to_async
 def get_user(token):
@@ -23,5 +25,6 @@ class JWTAuthMiddleware(BaseMiddleware):
       scope['user'] = await get_user(token)
       return await super().__call__(scope, receive, send)
    
-# def JWTAuthMiddlewareStack(inner):
-#    return JWTAuthMiddleware(AuthMiddlewareStack(inner))
+   
+def JWTAuthMiddlewareStack(inner):
+   return JWTAuthMiddleware(inner)
