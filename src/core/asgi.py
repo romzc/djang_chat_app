@@ -14,6 +14,7 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from django.urls import re_path
 from chats import consumers
 from chats.api.routing import websocket_urlpatterns
+from channels.auth import AuthMiddlewareStack
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
