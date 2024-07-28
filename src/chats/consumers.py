@@ -16,17 +16,9 @@ from djangochannelsrestframework.mixins import (
 )
 
 class MessageConsumer( AsyncAPIConsumer ):
-
-   async def connect(self):
-      return await super().connect()
-
-   async def disconnect(self, code):
-      return await super().disconnect(code)
    
    async def receive(self, text_data=None, bytes_data=None, **kwargs):
-      # Parse the received message
-      # response = awaitsuper().receive(text_data, bytes_data, **kwargs)
-      # print(response)
+     
       user = self.scope['user']
 
       if user.is_anonymous:
@@ -34,17 +26,20 @@ class MessageConsumer( AsyncAPIConsumer ):
          return
 
       data = json.loads(text_data)
-      message = data.get('content', 'No message received')
+      message = data.get('content', None)
       receiver_aux = data.get('receiver', None)
 
       if receiver_aux is None:
-         return await self.send(text_data=json.dumps({'response': 'fill information please'}))
+         return await self.send(text_data=json.dumps({'response': 'receiver not found'}))
 
       receiver = await self.get_user_by_id(receiver_aux['id'])
 
       if receiver is None:
          return await self.send(text_data=json.dumps({'response': 'fill information please'}))
 
+      if message is None:
+         return await self.send(text_data=json.dumps({'response': 'message content not found'}))
+ 
       # Crear y guardar el mensaje
       message = await self.create_mesasage(user, receiver, message)
 

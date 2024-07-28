@@ -1,11 +1,18 @@
 from os import read
+from django.forms import IntegerField
 from rest_framework import serializers
 from ..models import ChatGroup, Message, Contact
 from user.api.serializers import UserSerializer
 from django.contrib.auth.models import User
 
-class MessageSerializer(serializers.ModelSerializer):
-   
+class MessageUpdateSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Message
+      fields = ['id', 'sender', 'receiver', 'timestamp', 'content']
+
+
+class MessageCreateSerializer(serializers.ModelSerializer):
+   id = serializers.IntegerField(read_only=True)
    sender = UserSerializer(read_only=True)
    receiver = UserSerializer(read_only=True)
 
@@ -33,9 +40,3 @@ class ContactSerializer(serializers.ModelSerializer):
    class Meta:
       model = Contact
       fields = ['id', 'user', 'contact']
-
-
-
-"""
-
-"""
