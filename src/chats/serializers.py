@@ -1,7 +1,7 @@
 from os import read
 from django.forms import IntegerField
 from rest_framework import serializers
-from ..models import ChatGroup, Message, Contact
+from .models import ChatGroup, Message, Contact
 from user.api.serializers import UserSerializer
 from django.contrib.auth.models import User
 

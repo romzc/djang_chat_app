@@ -9,7 +9,7 @@ from rest_framework.generics import views
 from rest_framework.mixins import CreateModelMixin, ListModelMixin
 
 from core.middlewares import JWTAuthMiddleware
-from .api.serializers import (
+from .serializers import (
    ChatGroupSerializer, 
    ContactSerializer, 
    MessageCreateSerializer, 

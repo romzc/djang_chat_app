@@ -2,7 +2,7 @@ import json
 from typing import Dict
 from django.contrib.auth.models import User
 from django.dispatch import receiver
-from .api.serializers import MessageSerializer
+from .serializers import MessageSerializer
 from .models import Message
 from djangochannelsrestframework.generics import AsyncAPIConsumer
 from channels.db import database_sync_to_async

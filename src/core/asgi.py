@@ -13,7 +13,7 @@ from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from django.urls import re_path
 from chats import consumers
-from chats.api.routing import websocket_urlpatterns
+from chats.routing import websocket_urlpatterns
 from channels.auth import AuthMiddlewareStack
 from core.middlewares import JWTAuthMiddlewareStack
 

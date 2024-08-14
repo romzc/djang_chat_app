@@ -22,7 +22,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from user.api.serializers import UserTokenObtainPairSerializer
 from user.views import UserObtainTokenPairView
 from chats import consumers
-from chats.api.routing import websocket_urlpatterns  # Asegúrate de tener esto si usas routing.py
+from chats.routing import websocket_urlpatterns  # Asegúrate de tener esto si usas routing.py
 
 
 urlpatterns = [
