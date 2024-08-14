@@ -5,44 +5,35 @@ from django.contrib.auth.models import User
 from rest_framework import viewsets, permissions, response, status
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from .api.serializers import ChatGroupSerializer, ContactSerializer, MessageSerializer
+from rest_framework.generics import views 
+from rest_framework.mixins import CreateModelMixin, ListModelMixin
+
+from core.middlewares import JWTAuthMiddleware
+from .api.serializers import (
+   ChatGroupSerializer, 
+   ContactSerializer, 
+   MessageCreateSerializer, 
+   MessageUpdateSerializer
+)
 from .models import Contact, ChatGroup, Message
 
-""" Existen problemas al momento de crear nuevos mensajes """
-# Create your views here.
-class MessageViewSet(viewsets.ModelViewSet):
+
+class MessageListView(ListModelMixin, views.APIView):
    """
-   API endpoint that allows to be viewed or edited messages
+   API endpoints to list and create views.
    """
    queryset = Message.objects.all().order_by('-timestamp')
-   serializer_class = MessageSerializer
+   serializer_class = MessageCreateSerializer
    authentication_classes = [JWTAuthentication]
    permission_classes = [permissions.IsAuthenticated]
 
-   def get_queryset(self):
-      # obtener el usuario.
-      user = self.request.user
-      return Message.objects.filter(Q(sender=user) | Q(receiver=user)).order_by('-timestamp')
+   def list(self, request, *args, **kwargs):
+      user = request.user
+      print(user)
+      return super().list(request, *args, **kwargs)
 
-   def perform_create(self, serializer):
-      # Obtener el usuario autenticado
-      sender = self.request.user
-      # Obtener el receptor del cuerpo de la solicitud
-      receiver_data = self.request.data.get('receiver')
-      if not receiver_data:
-         raise ValidationError({"receiver": "This field is required."})
-      try:
-         receiver = User.objects.get(id=receiver_data['id'])
-      except User.DoesNotExist:
-         raise ValidationError({"receiver": "Invalid user ID."})
-      #Crear el mensaje con el sender y receiver especificados
-      serializer.save(sender=sender, receiver=receiver)
-   
 
-class ContactViewSet(viewsets.ModelViewSet):
-   """
-   API endpoint that allows to be viewed or edited contact
-   """
+class ContactListCreateView(ListCreateAPIView):
    queryset = Contact.objects.all()
    serializer_class = ContactSerializer
    authentication_classes = [JWTAuthentication]
@@ -52,6 +43,20 @@ class ContactViewSet(viewsets.ModelViewSet):
       user = self.request.user
       return Contact.objects.filter(user=user)
 
+
+class ContactCreateUpdateView(RetrieveUpdateDestroyAPIView):
+   pass
+
+
+class ContactViewSet(viewsets.ModelViewSet):
+   """
+   API endpoint that allows to be viewed or edited contact
+   """
+   queryset = Contact.objects.all()
+   serializer_class = ContactSerializer
+   authentication_classes = [JWTAuthentication]
+   permission_classes = [permissions.IsAuthenticated]
+  
    """ Add new contact to current user"""
    def perform_create(self, serializer):
       user = self.request.user

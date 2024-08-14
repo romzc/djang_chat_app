@@ -5,6 +5,7 @@ from ..models import ChatGroup, Message, Contact
 from user.api.serializers import UserSerializer
 from django.contrib.auth.models import User
 
+
 class MessageUpdateSerializer(serializers.ModelSerializer):
    class Meta:
       model = Message
