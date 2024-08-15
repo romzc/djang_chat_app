@@ -1,11 +1,9 @@
-from urllib import request
 from django.shortcuts import render
 from django.db.models import Q
 from django.contrib.auth.models import User
-from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework import mixins, generics, serializers, viewsets, permissions, response, status
-from .models import Contact, ChatGroup
+from rest_framework import mixins, generics, serializers, permissions, response, status
+from .models import Contact
 from .services import create_contact
 
 class ContactListView(mixins.ListModelMixin, generics.GenericAPIView):
@@ -79,30 +77,3 @@ class ContactCreateView(mixins.CreateModelMixin, generics.GenericAPIView):
       return response.Response(status=status.HTTP_201_CREATED, 
                                data=self.OutputSerializer(new_contact).data
                               )
-
-
-class ChatGroupCreateView(mixins.CreateModelMixin, generics.GenericAPIView):
-
-   class ChatGroupSerializer(serializers.ModelSerializer):
-      model = ChatGroup
-
-   queryset = ChatGroup.objects.all().order_by('-created_at')
-   authentication_classes = [JWTAuthentication]
-   serializer_class = ChatGroupSerializer
-   permission_classes = [permissions.IsAuthenticated]
-
-   def create(self, request, *args, **kwargs):
-      return super().create(request, *args, **kwargs)
-
-
-class ChatGroupListView(mixins.ListModelMixin, generics.GenericAPIView):
-   """
-   Chat group to list views
-   """
-   class ChatGroupSerializer(serializers.ModelSerializer):
-      model = ChatGroup
-      
-   queryset = ChatGroup.objects.all().order_by('-created_at')
-   authentication_classes = [JWTAuthentication]
-   serializer_class = ChatGroupSerializer
-   permission_classes = [permissions.IsAuthenticated]

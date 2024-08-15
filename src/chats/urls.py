@@ -4,8 +4,8 @@ from . import consumers
 from .views import (
     ContactListView,
     ContactCreateView,
-    ChatGroupListView,
-    ChatGroupCreateView
+    # ChatGroupListView,
+    # ChatGroupCreateView
 )
 
 # router = routers.DefaultRouter()
@@ -17,6 +17,6 @@ urlpatterns = [
     # path('', include(router.urls)),
     path('contacts/', ContactListView.as_view()),
     path('contacts/create/', ContactCreateView.as_view()),
-    path('chats_groups/',ChatGroupListView.as_view()),
+    # path('chats_groups/',ChatGroupListView.as_view()),
     
 ]
