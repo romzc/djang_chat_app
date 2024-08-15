@@ -31,7 +31,7 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),    
     path("api-auth/", include("rest_framework.urls")),
     path("api/users/", include("user.api.urls")),
-    path("api/chats/", include("chats.api.urls")),
+    path("api/chats/", include("chats.urls")),
     re_path(r'^ws/', include(websocket_urlpatterns)),
 ] 
 

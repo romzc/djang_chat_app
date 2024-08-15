@@ -2,9 +2,9 @@ import json
 from typing import Dict
 from django.contrib.auth.models import User
 from django.dispatch import receiver
-from .serializers import MessageSerializer
+from rest_framework import serializers
 from .models import Message
-from djangochannelsrestframework.generics import AsyncAPIConsumer
+from djangochannelsrestframework.generics import GenericAsyncAPIConsumer
 from channels.db import database_sync_to_async
 from djangochannelsrestframework.mixins import (
    ListModelMixin,
@@ -12,10 +12,31 @@ from djangochannelsrestframework.mixins import (
    PatchModelMixin,
    UpdateModelMixin,
    CreateModelMixin,
-   DeleteModelMixin
+   DeleteModelMixin,
 )
 
-class MessageConsumer( AsyncAPIConsumer ):
+class MessageConsumer( GenericAsyncAPIConsumer ):
+
+   class UserSerializer(serializers.ModelSerializer):
+      class Meta:
+        model = User
+        fields = ['id', 'username', 'email']
+
+   class InputSerializer(serializers.Serializer):
+      receiver = serializers.IntegerField()
+      content = serializers.CharField()
+
+   class OutputSerializer(serializers.Serializer):
+      receiver = serializers.SerializerMethodField()
+      sender = serializers.SerializerMethodField()
+      content = serializers.CharField()
+
+      def get_receiver(self, obj):
+         return MessageConsumer.UserSerializer(obj.receiver).data
+         
+      def get_sender(self, obj):
+         return MessageConsumer.UserSerializer(obj.sender).data
+
    
    async def receive(self, text_data=None, bytes_data=None, **kwargs):
      
@@ -24,29 +45,19 @@ class MessageConsumer( AsyncAPIConsumer ):
       if user.is_anonymous:
          await self.send(text_data=json.dumps({'error': 'Unauthorized'}))
          return
+      
+      serializer = self.InputSerializer(data=json.loads(text_data))
+      serializer.is_valid(raise_exception=True)
 
-      data = json.loads(text_data)
-      message = data.get('content', None)
-      receiver_aux = data.get('receiver', None)
-
-      if receiver_aux is None:
-         return await self.send(text_data=json.dumps({'response': 'receiver not found'}))
-
-      receiver = await self.get_user_by_id(receiver_aux['id'])
+      receiver = await self.get_user_by_id(serializer.data.get('receiver'))
 
       if receiver is None:
-         return await self.send(text_data=json.dumps({'response': 'fill information please'}))
+         return await self.send(text_data=json.dumps({'response': 'receiver not found'}))
 
-      if message is None:
-         return await self.send(text_data=json.dumps({'response': 'message content not found'}))
- 
-      # Crear y guardar el mensaje
-      message = await self.create_mesasage(user, receiver, message)
-
-      # Send a simple response
-      await self.send(text_data=json.dumps({
-         'response': f'Received message from {user.username}: {receiver}'
-      }))
+      # Create, serializer and return new message
+      message = await self.create_mesasage(user, receiver, serializer.data.get('content'))
+      serialized_message = self.OutputSerializer(message).data
+      await self.send(text_data=json.dumps(serialized_message))
    
    
    @database_sync_to_async
