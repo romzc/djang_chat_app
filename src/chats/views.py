@@ -77,3 +77,6 @@ class ContactCreateView(mixins.CreateModelMixin, generics.GenericAPIView):
       return response.Response(status=status.HTTP_201_CREATED, 
                                data=self.OutputSerializer(new_contact).data
                               )
+
+# class ChatRoomListView(mixins.ListModelMixin, generics.GenericAPIView):
+#    class 
